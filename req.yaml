@@ -1,0 +1,10 @@
+---
+roles:
+  - name: geerlingguy.swap
+  - name: gantsign.postman
+  - name: geerlingguy.mysql
+  - name: gantsign.visual-studio-code
+  - name: gantsign.visual-studio-code-extensions
+  - name: darkwizard242.googlechrome
+  - name: geerlingguy.java
+  - name: geerlingguy.nodejs
