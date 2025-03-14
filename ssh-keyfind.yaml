@@ -1,0 +1,35 @@
+---
+- name: Check SSH Password Using sshpass
+  hosts: localhost
+  gather_facts: no
+  vars:
+    remote_host: "test"
+    remote_user: "your_remote_user"
+    ssh_password:
+      - "password1"
+      - "password2"
+      - "password3"
+  tasks:
+    - name: Attempt SSH Login
+      shell: |
+        sshpass -p '{{ ssh_password }}' ssh -o StrictHostKeyChecking=no {{ remote_user }}@{{ remote_host }} exit
+      register: ssh_result
+      ignore_errors: yes
+      loop: "{{password_list}}"
+
+    - name: Find Correct Password
+      set_fact:
+        correct_password: "{{ item.item }}"
+      when: item.rc == 0
+      loop: "{{ ssh_results.results }}"
+      loop_control:
+        label: "Checking password"
+
+    - name: Debug Correct Password
+      debug:
+        msg: "Correct password found: {{ correct_password | default('None') }}"
+
+    - name: Fail if No Password Worked
+      fail:
+        msg: "SSH login failed. None of the provided passwords worked."
+      when: correct_password is not defined
